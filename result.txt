@@ -1,0 +1,64 @@
+practice1:
+# 6.找出Employee表中姓名包含`n`字符并且薪资大于6000的雇员所有个人信息
+mysql> SELECT * FROM Employee WHERE `name` LIKE '%n%' AND salary > 6000;
+结果展示:
++----+------------+-----+----------+-----------+--------+
+| id | name       | age | gender   | companyId | salary |
++----+------------+-----+----------+-----------+--------+
+|  1 | 'xiaohong' |  19 | 'female' |         1 |   7000 |
++----+------------+-----+----------+-----------+--------+
+
+
+practice2:
+# 取得每个company中最高薪水的人员名字
+# 输出结果包含公司名称和人员名称：companyName name
+SELECT employee.companyName, employee.name FROM 
+	(SELECT e.*, c.companyName FROM Employee e LEFT JOIN Company c ON e.companyId = c.id) employee 
+	Right JOIN 
+	(SELECT companyId, max(salary) AS maxsal FROM Employee GROUP BY companyId) t 
+	ON 
+	t.maxsal = employee.salary 
+	AND 
+	employee.companyId = t.companyId;
+结果展示:
++-------------+------------+
+| companyName | name       |
++-------------+------------+
+| baidu       | 'xiaoming' |
+| alibaba     | 'xiaohong' |
+| tengxun     | 'xiaozhi'  |
++-------------+------------+
+
+
+practice3:
+#取得平均薪水最高的公司
+#输出公司名称和平均薪水：companyName avgSalary
+SELECT c.companyName, MAX(e.avgSalary) FROM
+	(SELECT e.companyId, AVG(e.salary) AS avgSalary FROM employee e GROUP BY e.companyId) e
+	INNER JOIN
+	company c
+	ON
+	e.companyId = c.id
+结果展示:
++-------------+------------------+
+| companyName | MAX(e.avgSalary) |
++-------------+------------------+
+| baidu       |        8000.0000 |
++-------------+------------------+
+
+
+practice4:
+# 找出薪水在公司的平均薪水之上的人员名字
+# 输出标准中包含Employee中所有字段和该employee所在公司名称以及该公司平均薪资：
+# id | name | age | gender | companyId | salary | companyName | avgsal
+结果展示:
++----+------------+-----+----------+-----------+--------+-------------+-----------+
+| id | name       | age | gender   | companyId | salary | companyName | avgSalary |
++----+------------+-----+----------+-----------+--------+-------------+-----------+
+|  0 | 'xiaoming' |  20 | 'male'   |         0 |   6000 | baidu       | 5000.0000 |
+|  1 | 'xiaohong' |  19 | 'female' |         1 |   7000 | alibaba     | 6500.0000 |
+|  2 | 'xiaozhi'  |  15 | 'male'   |         2 |   8000 | tengxun     | 8000.0000 |
++----+------------+-----+----------+-----------+--------+-------------+-----------+
+
+
+
